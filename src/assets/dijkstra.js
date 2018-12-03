@@ -1,12 +1,13 @@
 import ROT from 'rot-js'
-import { getWallCharacter, unicodeWalls, computeBitmaskWalls } from './helper'
+import { getWallCharacter, unicodeWalls, computeBitmaskWalls, sumToTile } from './helper'
 
 ROT.RNG.setSeed(1234)
 export const width = 70
 export const height = 40
-export const display = new ROT.Display({ width, height, fontFamily: 'monospace', forceSquareRatio: false, bg: '#0E3A39' })
+export const display = new ROT.Display({ width, height, fontFamily: 'Courier', fontSize: 18, forceSquareRatio: false, bg: '#0E3A39' })
 export const mapGenerator = new ROT.Map.Uniform(width, height, { roomWidth: [4, 8], roomHeight: [4, 8], roomDugPercentage: 0.3 })
 export const map = {}
+const blockedMap = {}
 
 export function mountCanvas() {
 	const container = document.getElementById('canvas_container')
@@ -17,17 +18,25 @@ export function mountCanvas() {
 const key = (x, y) => {
 	return x + ',' + y
 }
+const unkey = k => {
+	return k.split(',').map(s => parseInt(s))
+}
 
-const hasFloorAdjacent = (x, y) => ROT.DIRS[8].some(([dx, dy]) => key(x + dx, y + dy) in map && !map[key(x + dx, y + dy)])
+// const hasFloorAdjacent = (x, y) => ROT.DIRS[8].some(([dx, dy]) => key(x + dx, y + dy) in map && !map[key(x + dx, y + dy)])
+const allWallsAdjacent = (x, y) => ROT.DIRS[8].every(([dx, dy]) => !(key(x + dx, y + dy) in blockedMap) || blockedMap[key(x + dx, y + dy)])
 
 export function drawDungeon() {
 	mapGenerator.create((x, y, blocked) => {
-		map[key(x, y)] = blocked
+		blockedMap[key(x, y)] = blocked
 	})
+	for (let k of Object.keys(blockedMap)) {
+		let [x, y] = unkey(k)
+		map[k] = allWallsAdjacent(x, y)
+	}
 	for (let y = 0; y < height; y++) {
 		for (let x = 0; x < width; x++) {
-			if (map[key(x, y)] && hasFloorAdjacent(x, y))
-				display.draw(x, y, getWallCharacter(unicodeWalls, computeBitmaskWalls(x, y, map)), '#C1AB89')
+			if (map[key(x, y)] && allWallsAdjacent(x, y))
+				display.draw(x, y, sumToTile(computeBitmaskWalls(x, y, map)), '#C1AB89')
 			else if (!map[key(x, y)]) display.draw(x, y, '.')
 		}
 	}

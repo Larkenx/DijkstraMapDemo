@@ -39,10 +39,8 @@ export function computeBitmaskWalls(x, y, freeCells) {
 	let below = `${x},${y + 1}`
 	let left = `${x - 1},${y}`
 	let right = `${x + 1},${y}`
-
 	let ur = `${x + 1},${y - 1}`
 	let ll = `${x - 1},${y + 1}`
-
 	let ul = `${x - 1},${y - 1}`
 	let lr = `${x + 1},${y + 1}`
 
@@ -50,37 +48,67 @@ export function computeBitmaskWalls(x, y, freeCells) {
 		return coord in freeCells && !freeCells[coord]
 	}
 
-	if (free(above)) sum += 1
-	if (free(right)) sum += 2
-	if (free(below)) sum += 4
+	if (free(above)) sum += 2
+	if (free(right)) sum += 16
+	if (free(below)) sum += 64
 	if (free(left)) sum += 8
-	if (free(above) && !free(below) && !free(right) && !free(left) && (free(ll) || free(lr))) {
-		return 20
+	if (free(above) && free(right) && free(below) && free(left)) {
+		if (free(ul)) sum += 1
+		if (free(ur)) sum += 4
+		if (free(ll)) sum += 32
+		if (free(lr)) sum += 128
 	}
-	if (free(below) && !free(above) && !free(right) && !free(left) && (free(ul) || free(ur))) {
-		return 21
-	}
-
-	// if (!free(left) && !free(right) && free(above) && free(below) && (free(ll) || free(lr))) {
-	// 	return 23
-	// }
-	if (sum == 0) {
-		if (free(ul)) return 16
-		else if (free(ur)) return 17
-		else if (free(ll)) return 18
-		else if (free(lr)) return 19
-	}
-
-	// if (!free(left) && !free(above) && !free(below) && (free(ur) || free(ll))) {
-	// 	return 22
-	// }
-
-	// if (!free(right) && !free(above) && !free(below) && (free(ur) || free(ll))) {
-	// 	return 23
-	// }
-
 	return sum
 }
+
+// export function computeBitmaskWalls(x, y, freeCells) {
+// 	let sum = 0
+// 	let above = `${x},${y - 1}`
+// 	let below = `${x},${y + 1}`
+// 	let left = `${x - 1},${y}`
+// 	let right = `${x + 1},${y}`
+
+// 	let ur = `${x + 1},${y - 1}`
+// 	let ll = `${x - 1},${y + 1}`
+
+// 	let ul = `${x - 1},${y - 1}`
+// 	let lr = `${x + 1},${y + 1}`
+
+// 	let free = coord => {
+// 		return coord in freeCells && !freeCells[coord]
+// 	}
+
+// 	if (free(above)) sum += 1
+// 	if (free(right)) sum += 2
+// 	if (free(below)) sum += 4
+// 	if (free(left)) sum += 8
+// 	if (free(above) && !free(below) && !free(right) && !free(left) && (free(ll) || free(lr))) {
+// 		return 20
+// 	}
+// 	// if (free(below) && !free(above) && !free(right) && !free(left) && (free(ul) || free(ur))) {
+// 	// 	return 21
+// 	// }
+
+// 	// if (!free(left) && !free(right) && free(above) && free(below) && (free(ll) || free(lr))) {
+// 	// 	return 23
+// 	// }
+// 	if (sum == 0) {
+// 		if (free(ul)) return 16
+// 		else if (free(ur)) return 17
+// 		else if (free(ll)) return 18
+// 		else if (free(lr)) return 19
+// 	}
+
+// 	// if (!free(left) && !free(above) && !free(below) && (free(ur) || free(ll))) {
+// 	// 	return 22
+// 	// }
+
+// 	// if (!free(right) && !free(above) && !free(below) && (free(ur) || free(ll))) {
+// 	// 	return 23
+// 	// }
+
+// 	return sum
+// }
 
 export function getFloorCharacter(floor, sum) {
 	const mapping = {
@@ -107,6 +135,8 @@ export function getFloorCharacter(floor, sum) {
 	}
 	return mapping[sum]
 }
+
+
 
 export function getWallCharacter(walls, sum) {
 	const wallSums = {
@@ -138,44 +168,44 @@ export function getWallCharacter(walls, sum) {
 	return wallSums[sum]
 }
 
-// export const unicodeWalls = {
-// 	single: ' ',
-// 	bottom: '═',
-// 	left: '║',
-// 	top: '═',
-// 	right: '║',
-// 	endTop: '╥',
-// 	endBottom: '╨',
-// 	center: '#',
-// 	lowerRight: '╝',
-// 	lowerLeft: '╚',
-// 	upperRight: '╗',
-// 	upperLeft: '╔',
-// 	topT: '┳',
-// 	leftT: '╠',
-// 	rightT: '╣',
-// 	centerT: '╬'
-// }
-
 export const unicodeWalls = {
 	single: ' ',
-	bottom: '─',
-	left: '|',
-	top: '─',
-	right: '|',
-	endTop: '┬',
-	endBottom: '┴',
+	bottom: '═',
+	left: '║',
+	top: '═',
+	right: '║',
+	endTop: '╥',
+	endBottom: '╨',
 	center: '#',
-	lowerRight: '┘',
-	lowerLeft: '└',
-	upperRight: '┐',
-	upperLeft: '┌',
-	topT: '┬',
-	leftT: '├',
-	rightT: '┤',
-	centerT: '┼',
-	bottomT: '┴'
+	lowerRight: '╝',
+	lowerLeft: '╚',
+	upperRight: '╗',
+	upperLeft: '╔',
+	topT: '╦',
+	leftT: '╠',
+	rightT: '╣',
+	centerT: '╬'
 }
+
+// export const unicodeWalls = {
+// 	single: " ",
+// 	bottom: "─",
+// 	left: "│",
+// 	top: "─",
+// 	right: "│",
+// 	endTop: "┬",
+// 	endBottom: "┴",
+// 	center: "#",
+// 	lowerRight: "┘",
+// 	lowerLeft: "└",
+// 	upperRight: "┐",
+// 	upperLeft: "┌",
+// 	topT: "┬",
+// 	leftT: "├",
+// 	rightT: "┤",
+// 	centerT: "┼",
+// 	bottomT: "┴"
+// }
 
 // export const unicodeWalls = {
 // 	single: ' ',
@@ -195,3 +225,84 @@ export const unicodeWalls = {
 // 	rightT: '',
 // 	centerT: '╋'
 // }
+
+export const sumToTileIdMap = {
+	2: 1,
+	8: 2,
+	10: 3,
+	11: 4,
+	16: 5,
+	18: 6,
+	22: 7,
+	24: 8,
+	26: 9,
+	27: 10,
+	30: 11,
+	31: 12,
+	64: 13,
+	66: 14,
+	72: 15,
+	74: 16,
+	75: 17,
+	80: 18,
+	82: 19,
+	86: 20,
+	88: 21,
+	90: 22,
+	91: 23,
+	94: 24,
+	95: 25,
+	104: 26,
+	106: 27,
+	107: 28,
+	120: 29,
+	122: 30,
+	123: 31,
+	126: 32,
+	127: 33,
+	208: 34,
+	210: 35,
+	214: 36,
+	216: 37,
+	218: 38,
+	219: 39,
+	222: 40,
+	223: 41,
+	248: 42,
+	250: 43,
+	251: 44,
+	254: 45,
+	255: 46,
+	0: 47
+}
+
+
+// ╔═╗   ╦
+// ║#║  ╠╬╣  
+// ╚═╝  ╞╩╡
+
+// 8 x 6
+export const unicodeBoxTiles = [
+	['▓', '╨', '╡', '╝', '╝', '╞', '╚', '╚'],
+	['═', '╩', '╩', '╩', '═', '╥', '║', '╗'],
+	['╣', '╣', '╔', '╠', '╠', '╦', '╬', '╬'],
+	['╬', '╬', '╗', '╣', '║', '╦', '╬', '╬'],
+	['╬', '╔', '╔', '╠', '║', '╗', '╬', '╬'],
+	['╬', '╗', '═', '╩', '╬', '╬', '▓', '▓']
+]
+
+
+// happy little accident - makes it look like 3d?!
+// export const unicodeBoxTiles = [
+// 	['#', '╨', '╡', '╝', '╝', '╞', '╚', '╚'],
+// 	['═', '╩', '╩', '╩', '═', '╥', '║', '╗'],
+// 	['╣', '╣', '╔', '╠', '╠', '╦', '╬', '╬'],
+// 	['╬', '╬', '╗', '╣', '║', '╦', '╬', '╬'],
+// 	['╬', '╔', '╔', '╠', '║', '╗', '╬', '╬'],
+// 	['╬', '╗', '═', '╩', '╬', '╬', '#', '#']
+// ]
+
+export function sumToTile(sum) {
+	let arr = unicodeBoxTiles.reduce((a, b) => a.concat(b))
+	return arr[sumToTileIdMap[sum]]
+}
