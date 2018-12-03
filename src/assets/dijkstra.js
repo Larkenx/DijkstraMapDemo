@@ -4,7 +4,7 @@ import { getWallCharacter, unicodeWalls, computeBitmaskWalls, sumToTile } from '
 ROT.RNG.setSeed(1234)
 export const width = 70
 export const height = 40
-export const display = new ROT.Display({ width, height, fontFamily: 'Courier', fontSize: 18, forceSquareRatio: false, bg: '#0E3A39' })
+export const display = new ROT.Display({ width, height, fontFamily: 'Courier', fontSize: 18, forceSquareRatio: true, bg: '#0E3A39' })
 export const mapGenerator = new ROT.Map.Uniform(width, height, { roomWidth: [4, 8], roomHeight: [4, 8], roomDugPercentage: 0.3 })
 export const map = {}
 const blockedMap = {}
@@ -30,12 +30,12 @@ export function drawDungeon() {
 		blockedMap[key(x, y)] = blocked
 	})
 	for (let k of Object.keys(blockedMap)) {
-		let [x, y] = unkey(k)
-		map[k] = allWallsAdjacent(x, y)
+		// let [x, y] = unkey(k)
+		map[k] = ((k in blockedMap) && blockedMap[k]) //|| allWallsAdjacent(x, y)
 	}
 	for (let y = 0; y < height; y++) {
 		for (let x = 0; x < width; x++) {
-			if (map[key(x, y)] && allWallsAdjacent(x, y))
+			if (map[key(x, y)])
 				display.draw(x, y, sumToTile(computeBitmaskWalls(x, y, map)), '#C1AB89')
 			else if (!map[key(x, y)]) display.draw(x, y, '.')
 		}

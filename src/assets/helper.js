@@ -1,3 +1,9 @@
+import ROT from 'rot-js'
+
+const key = (x, y) => x + ',' + y
+const unkey = k => {
+	return k.split(',').map(s => parseInt(s))
+}
 export function computeBitmaskFloors(x, y, freeCells) {
 	let sum = 0
 	let above = `${x},${y - 1}`
@@ -33,7 +39,7 @@ export function computeBitmaskFloors(x, y, freeCells) {
 	return sum
 }
 
-export function computeBitmaskWalls(x, y, freeCells) {
+export function computeBitmaskWalls(x, y, blockedCells) {
 	let sum = 0
 	let above = `${x},${y - 1}`
 	let below = `${x},${y + 1}`
@@ -44,20 +50,23 @@ export function computeBitmaskWalls(x, y, freeCells) {
 	let ul = `${x - 1},${y - 1}`
 	let lr = `${x + 1},${y + 1}`
 
-	let free = coord => {
-		return coord in freeCells && !freeCells[coord]
+	let blocked = coord => {
+		return !(coord in blockedCells) || blockedCells[coord]
 	}
 
-	if (free(above)) sum += 2
-	if (free(right)) sum += 16
-	if (free(below)) sum += 64
-	if (free(left)) sum += 8
-	if (free(above) && free(right) && free(below) && free(left)) {
-		if (free(ul)) sum += 1
-		if (free(ur)) sum += 4
-		if (free(ll)) sum += 32
-		if (free(lr)) sum += 128
-	}
+	// let neighborsAreCardinal = coord => {
+	// 	let [x, y] = unkey(coord)
+	// 	return ROT.DIRS[4].some(([dx, dy]) => blocked(x + dx, y + dy)) && blocked(coord)
+	// }
+
+	if (blocked(above)) sum += 2
+	if (blocked(right)) sum += 16
+	if (blocked(below)) sum += 64
+	if (blocked(left)) sum += 8
+	if (blocked(ul) && blocked(above) && blocked(left)) sum += 1
+	if (blocked(ur) && blocked(above) && blocked(right)) sum += 4
+	if (blocked(ll) && blocked(below) && blocked(left)) sum += 32
+	if (blocked(lr) && blocked(below) && blocked(right)) sum += 128
 	return sum
 }
 
@@ -268,6 +277,7 @@ export const sumToTileIdMap = {
 	219: 39,
 	222: 40,
 	223: 41,
+	246: 36,
 	248: 42,
 	250: 43,
 	251: 44,
@@ -283,12 +293,16 @@ export const sumToTileIdMap = {
 
 // 8 x 6
 export const unicodeBoxTiles = [
-	['▓', '╨', '╡', '╝', '╝', '╞', '╚', '╚'],
-	['═', '╩', '╩', '╩', '═', '╥', '║', '╗'],
-	['╣', '╣', '╔', '╠', '╠', '╦', '╬', '╬'],
-	['╬', '╬', '╗', '╣', '║', '╦', '╬', '╬'],
-	['╬', '╔', '╔', '╠', '║', '╗', '╬', '╬'],
-	['╬', '╗', '═', '╩', '╬', '╬', '▓', '▓']
+	//    0    1
+	[' ', '╨', '╡', '╝', '╝', '╞', '╚', '╚'],
+	//    7    8
+	['═', '╩', '═', '═', '═', '╥', '║', '╗'],
+	//    14   15
+	['╣', '╣', '╔', '╠', '╠', '╦', ' ', ' '],
+	//    21   22  23   24    25
+	['═', ' ', '╗', '╣', '║', '╦', ' ', ' '],
+	['╬', '╔', '╔', '╠', '║', '╗', '╬', '!'],
+	['╣', '╗', '═', '╩', '╚', '╝', ' ', ' ']
 ]
 
 
@@ -304,5 +318,6 @@ export const unicodeBoxTiles = [
 
 export function sumToTile(sum) {
 	let arr = unicodeBoxTiles.reduce((a, b) => a.concat(b))
-	return arr[sumToTileIdMap[sum]]
+	console.assert(!(sumToTileIdMap[sum] in arr), sumToTileIdMap[sum])
+	return !(sumToTileIdMap[sum] in arr) ? sum : arr[sumToTileIdMap[sum]]
 }
