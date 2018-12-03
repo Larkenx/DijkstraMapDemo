@@ -9,18 +9,18 @@
 </template>
 
 <script>
-import Demo from "./components/Demo.vue";
+import Demo from './components/Demo.vue'
 
 export default {
-  name: "app",
-  components: {
-    Demo
-  }
-};
+	name: 'app',
+	components: {
+		Demo
+	}
+}
 </script>
 
 <style lang="css">
 black {
-  background-color: black;
+	background-color: black;
 }
 </style

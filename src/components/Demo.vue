@@ -7,12 +7,13 @@
 </template>
 
 <script>
-import { mountCanvas, drawDungeon } from '../assets/dijkstra.js'
+import { mountCanvas, render, init } from '../assets/dijkstra.js'
 export default {
 	name: 'Demo',
 	mounted() {
+		init()
 		mountCanvas()
-		drawDungeon()
+		render()
 	}
 }
 </script>
