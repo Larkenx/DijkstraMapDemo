@@ -147,5 +147,20 @@ export function createFovDijkstraMap(start, notVisibleTiles, blockedPredicate) {
 			distanceTransform[stepKey] = distance
 		}
 	}
+	distanceTransform[key(start.x, start.y)] = Number.MAX_VALUE
 	return distanceTransform
+}
+
+export const brightenColor = color => {
+	// console.log(color);
+	let hsl_color = ROT.Color.rgb2hsl(ROT.Color.fromString(color))
+	hsl_color[2] *= 1.25
+	return ROT.Color.toRGB(ROT.Color.hsl2rgb(hsl_color))
+}
+
+export const adjustBrightness = (color, percent) => {
+	// console.log(color);
+	let hsl_color = ROT.Color.rgb2hsl(ROT.Color.fromString(color))
+	hsl_color[2] *= percent
+	return ROT.Color.toRGB(ROT.Color.hsl2rgb(hsl_color))
 }
