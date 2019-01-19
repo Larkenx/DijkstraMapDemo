@@ -1,4 +1,7 @@
 # dijkstra-map-demo
+This is a web project that uses ROT.js to demo autoexplore & dijkstra maps / distance transform maps. 
+
+![screenshot](public/screen.gif)
 
 ## Project setup
 ```

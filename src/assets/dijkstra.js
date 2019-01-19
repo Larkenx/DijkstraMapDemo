@@ -1,8 +1,8 @@
 import ROT from 'rot-js'
 import { computeBitmaskWalls, sumToTile, key, unkey, getVisibleTiles, createFovDijkstraMap, adjustBrightness } from './helper'
 ROT.RNG.setSeed(1234)
-const width = 150
-const height = 25
+const width = 75
+const height = 50
 const wallColor = '#C1AB89'
 const floorColor = 'white'
 
@@ -119,7 +119,7 @@ export const autoExplore = () => {
 
 	const exploreInterval = setInterval(() => {
 		turn()
-	}, 60)
+	}, 30)
 
 	const endAutoExplore = (...args) => {
 		console.log('trying to end autoexplore')
